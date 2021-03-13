@@ -36,10 +36,13 @@ public class UserDao {
             if (resultSet.next()) {
                 user.setId(resultSet.getInt(1));
             }
+            System.out.println();
+            System.out.println("User created.");
+            findAll();
             return user;
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("issue with accessing database");
+            System.out.println("Issue with accessing database when CREATING USER");
             return null;
         }
     }
