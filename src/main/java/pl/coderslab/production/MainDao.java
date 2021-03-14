@@ -30,7 +30,8 @@ public class MainDao {
                     System.out.println("email:");
                     while (scanner.hasNextLine()) {
                         String newEmail = scanner.nextLine();
-                        if (UserDao.validateEmail(newEmail) == false) {
+                        if (UserDao.validateEmailOccurence(newEmail) == false) {
+                            if(UserDao.validateEmail(newEmail) == true){
                             System.out.println("username:");
                             String newUsername = scanner.nextLine();
                             System.out.println("password");
@@ -40,6 +41,9 @@ public class MainDao {
                             userDao.create(user);
                             System.out.println();
                             break;
+                            } else {
+                                System.out.println("Invalid email, try again");
+                            }
                         } else {
                             System.out.println("This email is already taken, try again");
                         }
@@ -49,10 +53,7 @@ public class MainDao {
                     // code for READ section
                     System.out.println("Input user id which you want more details about");
                     while (scanner.hasNextLine()) {
-                        while (!scanner.hasNextInt()) {
-                            System.out.println("That's not a number, try again");
-                            scanner.next();
-                        }
+                        validateIfNumber(scanner);
                         int UserToReadID = scanner.nextInt();
                         scanner.nextLine();
                         if (UserDao.validateID(UserToReadID) == true) {
@@ -68,29 +69,37 @@ public class MainDao {
                 case "u":
                     // code for UPDATE section
                     System.out.println("Input ID of the user you want to edit");
-                    while (!scanner.hasNextInt()) {
-                        System.out.println("That's not a number, try again");
-                        scanner.next();
-                    }
-                    while (scanner.hasNext()) {
+                    validateIfNumber(scanner);
+                    while (scanner.hasNextLine()) {
                         int userToUpdate = scanner.nextInt();
                         scanner.nextLine();
                         if (UserDao.validateID(userToUpdate) == true) {
                             User user = new User();
                             System.out.println("Input new (or old) email you want to upload");
-                            String email = scanner.nextLine();
-                            user.setEmail(email);
-                            System.out.println("Input new (or old) username you want to upload");
-                            String username = scanner.nextLine();
-                            user.setUserName(username);
-                            System.out.println("Input new (or old) password you want to upload");
-                            String password = scanner.nextLine();
-                            user.setPassword(password);
-                            UserDao userDao = new UserDao();
-                            userDao.update(user, userToUpdate);
-                            System.out.println("Double check if you wish - validate user with id: " + userToUpdate + " below");
-                            userDao.findAll();
-                            System.out.println();
+                            while(scanner.hasNextLine()) {
+                                String email = scanner.nextLine();
+                                if (UserDao.validateEmailOccurence(email) == false) {
+                                    if(UserDao.validateEmail(email) == true){
+                                        user.setEmail(email);
+                                        System.out.println("Input new (or old) username you want to upload");
+                                        String username = scanner.nextLine();
+                                        user.setUserName(username);
+                                        System.out.println("Input new (or old) password you want to upload");
+                                        String password = scanner.nextLine();
+                                        user.setPassword(password);
+                                        UserDao userDao = new UserDao();
+                                        userDao.update(user, userToUpdate);
+                                        System.out.println("Double check if you wish - validate user with id: " + userToUpdate + " below");
+                                        userDao.findAll();
+                                        System.out.println();
+                                        break;
+                                    } else {
+                                        System.out.println("Invalid email, try again");
+                                    }
+                                } else {
+                                    System.out.println("This email is already taken, try again");
+                                }
+                            }
                             break;
                         } else {
                             System.out.println("This ID is not associated with any user, try again");
@@ -101,10 +110,7 @@ public class MainDao {
                     // code for DELETE section
                     System.out.println("Input user id which you want to delete");
                     while (scanner.hasNextLine()) {
-                        while (!scanner.hasNextInt()) {
-                            System.out.println("That's not a number, try again");
-                            scanner.next();
-                        }
+                        validateIfNumber(scanner);
                         int userToDeleteID = scanner.nextInt();
                         if (UserDao.validateID(userToDeleteID) == true) {
                             UserDao userDao = new UserDao();
@@ -132,7 +138,15 @@ public class MainDao {
             }
         }
     }
-        private static void choseTaskToExecute(){
+
+    public static void validateIfNumber(Scanner scanner) {
+        while (!scanner.hasNextInt()) {
+            System.out.println("That's not a number, try again");
+            scanner.next();
+        }
+    }
+
+    private static void choseTaskToExecute(){
             System.out.println(ANSIEscapeCode.ANSI_PURPLE + "What task do you want to execute?" + ANSIEscapeCode.ANSI_RESET);
             System.out.println("Create user - type C");
             System.out.println("Read user - type R");

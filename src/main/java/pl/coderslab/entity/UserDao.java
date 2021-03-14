@@ -1,6 +1,9 @@
 package pl.coderslab.entity;
 
 import com.mysql.cj.protocol.Resultset;
+import org.apache.commons.validator.Validator;
+import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.commons.validator.routines.IBANValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
@@ -23,7 +26,6 @@ public class UserDao {
 //    PreparedStatement preStmt = DBUtil.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
     // CREATE METHOD where we pass a User. This method should be in the User (master?) constructor, which will be initiated in Main (or similiar)
-
     public User create(User user) {
         try (Connection conn = DbUtil.getConnection()) {
             PreparedStatement statement = conn.prepareStatement(CREATE_USER_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -47,7 +49,6 @@ public class UserDao {
     }
 
     // READ USER method - pass in the id of the user you want to print in the console
-
     public User read(int userId){
         try(Connection conn = DbUtil.getConnection()){
             PreparedStatement readUser = conn.prepareStatement(SELECT_USER_BY_ID);
@@ -72,7 +73,6 @@ public class UserDao {
     }
 
     // UPDATE USER method - pass in user and grant it updated attributes
-
     public void update(User user, int id){
         try(Connection conn = DbUtil.getConnection()){
             PreparedStatement readUser = conn.prepareStatement(UPDATE_USER_DATA_QUERY);
@@ -96,7 +96,6 @@ public class UserDao {
     }
 
     // DELETE USER method - pass in user it to delete it
-
     public void delete(int userId) {
         try(Connection conn = DbUtil.getConnection()){
             PreparedStatement deleteUser = conn.prepareStatement(DELETE_USER_BY_ID);
@@ -174,11 +173,21 @@ public class UserDao {
         }
     }
 
+    // auxilary method - validate email construction
+    public static boolean validateEmail(String email){
+        EmailValidator emailValidator = EmailValidator.getInstance(); // SINGLETON refference https://commons.apache.org/proper/commons-validator/apidocs/org/apache/commons/validator/EmailValidator.html#getInstance--
+        if(emailValidator.isValid(email) == true){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // auxilary method - validate if email is already used in the data base
-    public static boolean validateEmail(String string) {
+    public static boolean validateEmailOccurence(String email) {
         try (Connection connection = DbUtil.getConnection()) {
             PreparedStatement validateEmail = connection.prepareStatement(SELECT_USER_BY_EMAIL);
-            validateEmail.setString(1,string);
+            validateEmail.setString(1, email);
             ResultSet validateEmailDone = validateEmail.executeQuery();
             if(validateEmailDone.next()){
                 return true;
