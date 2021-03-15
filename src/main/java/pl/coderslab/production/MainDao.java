@@ -17,10 +17,6 @@ public class MainDao {
         while (!quit) {
             choseTaskToExecute();
             String choice = scanner.nextLine().toLowerCase();
-            if(choice != "c" || choice != "r" || choice != "u" || choice != "d" || choice != "v" || choice != "q") {
-                System.out.println("That's not an option, try again");
-                System.out.println();
-            }
             switch (choice) {
                 case "c":
                     // code for CREATE section
@@ -56,7 +52,7 @@ public class MainDao {
                         scanner.nextLine();
                         if (UserDao.validateID(UserToReadID) == true) {
                             UserDao userDao = new UserDao();
-                            User user = userDao.read(UserToReadID);
+                            userDao.read(UserToReadID);
                             System.out.println();
                             break;
                         } else {
@@ -132,7 +128,10 @@ public class MainDao {
                             "/▌\n" +
                             "/\\\uFEFF");
                     System.out.println();
-                    break;
+                default:
+                    System.out.println("That's not an option, try again");
+                    System.out.println();
+
             }
         }
     }
